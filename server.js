@@ -1,4 +1,5 @@
 const net = require('net');
+var os = require('os')
 const unixSocketServer = net.createServer();
 
 var unixSocket = process.env.unixSocket || '/tmp/socket/server.sock';
@@ -9,7 +10,7 @@ const connectedSockets = new Set();
 // broadcast to all connected sockets except one
 connectedSockets.broadcast = function(strData, except) {
     for (let sock of this) {
-        sock.write('Server Response: '+strData);
+        sock.write('Server ' + os.hostname() + ' Response: '+strData);
         if (strData.includes("close")) {
             console.log("The socket server will be terminated.");
             sock.write('The socket server will be terminated.');
