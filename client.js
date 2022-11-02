@@ -34,4 +34,4 @@ var interval = setInterval(function () {
     messageCount++;
 }, 2000);
 
-console.log('Client started using unixSocket: ' + unixSocket);
+console.log('Client started using unixSocket: ' + clientunixSocket);
