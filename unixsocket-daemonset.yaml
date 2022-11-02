@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vws-unixsocket
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vws-unixsocket
+  namespace: vws-unixsocket
+spec:
+  selector:
+    matchLabels:
+      app: vws-unixsocket
+  template:
+    metadata:
+      labels:
+        app: vws-unixsocket
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: vws-unixsocket
+        image: welasco/unixsocket
+        ports:
+        - containerPort: 3000
+        env:
+        - name: unixSocket
+          value: /tmp/socket/server.sock
+        - name: clientUnixSocket
+          value: /tmp/socket/server2.sock
+        volumeMounts:
+        - mountPath: /tmp/socket
+          name: plugin-dir
+      - name: vws-unixsocket2
+        image: welasco/unixsocket
+        env:
+        - name: unixSocket
+          value: /tmp/socket/server2.sock
+        - name: clientUnixSocket
+          value: /tmp/socket/server.sock
+        volumeMounts:
+        - mountPath: /tmp/socket
+          name: plugin-dir
+      volumes:
+      - hostPath:
+          path: /tmp/socket/
+          type: DirectoryOrCreate
+        name: plugin-dir
